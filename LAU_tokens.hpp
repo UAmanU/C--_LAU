@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <variant>
+using lau_types = std::variant<long long, bool, std::string>;
 namespace TokenData
 {
     enum class TokenType
@@ -25,18 +27,15 @@ namespace Bool
         TRUE,
         FALSE,
     };
-    inline constexpr std::string string_true = "True";
-    inline constexpr std::string string_false = "False";
+    inline constexpr std::string string_true = "true";
+    inline constexpr std::string string_false = "false";
 }
 namespace Operations
 {
     enum class OperationsType
     {
-        ASIGN,
-        PLUS,
-        MINUS
+        ASIGN = '=',
+        PLUS = '+',
+        MINUS = '-',
     };
-    inline constexpr char string_asign = '=';
-    inline constexpr char string_plus = '+';
-    inline constexpr char string_minus = '-';
 }
