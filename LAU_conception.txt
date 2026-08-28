@@ -1,0 +1,13 @@
+
+In this file, i'll write all conceptions of my new programming language: 
+                 Lanuguage by Aman U (LAU).
+
+Lau 1 version:
+
+Lau must to understand at least this text:
+
+    a = 20
+    b = 10
+    c = a + b
+    d = true
+
