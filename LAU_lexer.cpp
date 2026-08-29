@@ -19,11 +19,11 @@ void Lexer::convert_to_tokens()
     while (i < lenght)
     {
         char current = text_code[i];
-        if (std::isspace(current))
+        if (std::isspace(current)) // spaces
         {
             i++;
             continue;
-        }
+        } // operations
         if (current == static_cast<char>(Operations::OperationsType::PLUS))
         {
             tokens.push_back({TokenData::TokenType::OPERATIONS, "+"});
@@ -42,7 +42,7 @@ void Lexer::convert_to_tokens()
             i++;
             continue;
         }
-        if (std::isdigit(current))
+        if (std::isdigit(current)) // integers
         {
             std::string number = "";
             number += current;
@@ -55,7 +55,7 @@ void Lexer::convert_to_tokens()
             tokens.push_back({TokenData::TokenType::INT, number});
             continue;
         }
-        if (current == '\'')
+        if (current == '\'') // strings
         {
             std::string word = "";
             while (i < lenght && (!std::isspace(text_code[i])))
@@ -67,7 +67,7 @@ void Lexer::convert_to_tokens()
             i++;
             continue;
         }
-        if (std::isalpha(current) || current == '_')
+        if (std::isalpha(current) || current == '_') // variables and bools
         {
             std::string word = "";
             while (i < lenght && (std::isalnum(text_code[i]) || text_code[i] == '_'))

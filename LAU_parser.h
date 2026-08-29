@@ -14,10 +14,11 @@ private:
     LAU::Memory symbols;
     void next_token();    // position_in_tokens++;
     bool is_tokens_end(); // return position_in_tokens >= tokes.size();
+    auto token_to_type(const TokenData::Token &token) const;
+
 public:
     Parser(std::vector<TokenData::Token> &tokens);
     ~Parser() = default;
-    void parse();                      // main method
-    LAU::Memory get_variables() const; // return variables;
-    LAU::Memory get_symbols() const;   // return symbols;
+    void parse();                    // main method
+    LAU::Memory get_symbols() const; // return symbols;
 };
