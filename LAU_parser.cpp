@@ -35,7 +35,36 @@ LAU::Memory Parser::get_symbols() const
 }
 lau_types Parser::evaluate_variable_value(const std::vector<TokenData::Token> &eval_tokens)
 {
-    // ill write it tomorrow.
+    lau_types result;
+    TokenData::TokenType result_type = eval_tokens[0].type;
+    for (int i = 1; i < eval_tokens.size(); i++)
+    {
+        TokenData::Token current = eval_tokens[i];
+        TokenData::Token next = eval_tokens[i + 1];
+        TokenData::Token past = eval_tokens[i - 1];
+        if (current.type == next.type || current.type == past.type)
+        {
+            throw Error::SyntaxError("Syntax Error");
+        }
+        if (current.type == TokenData::TokenType::OPERATIONS)
+        {
+            if (past.type != next.type && past.type != TokenData::TokenType::INT)
+            {
+                // MVP can only sum integers.
+                throw Error::ValueError("Value Error");
+            }
+            if (past.type != result_type || next.type != result_type)
+            {
+                throw Error::ValueError("Value Error");
+            }
+            if (current.value == "+")
+            {
+                int eval_result = 0;
+                eval_result += (std::stoi(past.value) + std::stoi(next.value));
+                result = eval_result;
+            }
+        }
+    }
 }
 void Parser::parse()
 {

@@ -53,7 +53,7 @@ void Lexer::convert_to_tokens()
         {
             std::string number = "";
             number += current;
-            while (i < lenght && (!std::isspace(text_code[i])))
+            while (i < lenght && (std::isdigit(i)))
             {
                 char current = text_code[i];
                 number += current;
