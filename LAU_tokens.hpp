@@ -11,6 +11,7 @@ namespace TokenData
         BOOL,
         VARIABLE,
         OPERATIONS,
+        KEYWORD, // That's will be ; for MVP
         UNKNOWN
     };
 

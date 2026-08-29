@@ -1,5 +1,9 @@
 #include "LAU_parser.h"
 #include "LAU_errors.hpp"
+// i need to work with Parser
+// cause now, it will crash in line like
+// num = 1 + 2
+// i think i need to add ; symbol to see the lines.
 Parser::Parser(std::vector<TokenData::Token> &tokens) : tokens(std::move(tokens)) {};
 void Parser::next_token()
 {
@@ -29,6 +33,10 @@ LAU::Memory Parser::get_symbols() const
 {
     return symbols;
 }
+lau_types Parser::evaluate_variable_value(const std::vector<TokenData::Token> &eval_tokens)
+{
+    // ill write it tomorrow.
+}
 void Parser::parse()
 {
     int length = tokens.size();
@@ -48,15 +56,29 @@ void Parser::parse()
             {
                 if (next_symbol.value == "=") // asignment
                 {
-                    lau_types var_value = token_to_type(current); // i need to work with Parser
-                                                                  // cause now, it will crash in line like
-                                                                  // num = 1 + 2
-                                                                  // i think i need to add ; symbol to see the lines.
-                    symbols.emplace(current, var_value);
-                    position_in_tokens++;
-                    continue;
+                    std::vector<TokenData::Token> eval_tokens;
+                    while (tokens[position_in_tokens].value != ";")
+                    {
+                        current = tokens[position_in_tokens];
+                        eval_tokens.push_back({current.type, current.value});
+                        position_in_tokens++;
+                    }
+                    lau_types var_value = evaluate_variable_value(eval_tokens);
+                    symbols.emplace(current.value, var_value);
                 }
+                else
+                {
+                    std::string error_msg = "SyntaxError: invalid asignment. for variable " + current.value;
+                    throw Error::NameError(error_msg);
+                }
+                position_in_tokens++;
+                continue;
             }
+        }
+        // my planned MVP version of code only can create variables, not references, functions.
+        else
+        {
+            throw Error::SyntaxError("Invalid syntax.");
         }
     }
 }

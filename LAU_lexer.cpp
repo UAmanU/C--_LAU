@@ -1,4 +1,5 @@
 #include "LAU_lexer.h"
+#include "LAU_keysymbols.hpp"
 Lexer::Lexer(const std::string &text) : text_code(text) {};
 std::vector<TokenData::Token> Lexer::get_tokens() const
 {
@@ -24,6 +25,12 @@ void Lexer::convert_to_tokens()
             i++;
             continue;
         } // operations
+        if (current == Key_symbols::line_separator)
+        { // line separator ;
+            tokens.push_back({TokenData::TokenType::KEYWORD, ";"});
+            i++;
+            continue;
+        }
         if (current == static_cast<char>(Operations::OperationsType::PLUS))
         {
             tokens.push_back({TokenData::TokenType::OPERATIONS, "+"});

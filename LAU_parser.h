@@ -15,6 +15,7 @@ private:
     void next_token();    // position_in_tokens++;
     bool is_tokens_end(); // return position_in_tokens >= tokes.size();
     auto token_to_type(const TokenData::Token &token) const;
+    lau_types evaluate_variable_value(const std::vector<TokenData::Token> &eval_tokens); // e.g. evaluating 2+3 value
 
 public:
     Parser(std::vector<TokenData::Token> &tokens);
