@@ -1,10 +1,11 @@
 #include "LAU_parser.h"
-#include "LAU_errors.hpp"
 // i need to work with Parser
 // cause now, it will crash in line like
 // num = 1 + 2
 // i think i need to add ; symbol to see the lines.
-Parser::Parser(std::vector<TokenData::Token> &tokens) : tokens(std::move(tokens)) {};
+
+Parser::Parser(std::vector<TokenData::Token> tokens) : tokens(std::move(tokens)) {}
+
 void Parser::next_token()
 {
     position_in_tokens++;
@@ -29,10 +30,6 @@ auto Parser::token_to_type(const TokenData::Token &token) const
     }
     throw Error::ValueError("ValueError");
 }
-LAU::Memory Parser::get_symbols() const
-{
-    return symbols;
-}
 lau_types Parser::evaluate_variable_value(const std::vector<TokenData::Token> &eval_tokens)
 {
     lau_types result;
@@ -51,20 +48,16 @@ lau_types Parser::evaluate_variable_value(const std::vector<TokenData::Token> &e
             if (past.type != next.type && past.type != TokenData::TokenType::INT)
             {
                 // MVP can only sum integers.
-                throw Error::ValueError("Value Error");
+                throw Error::ValueError("You can work with only numbers.");
             }
-            if (past.type != result_type || next.type != result_type)
-            {
-                throw Error::ValueError("Value Error");
-            }
-            if (current.value == "+")
-            {
-                int eval_result = 0;
-                eval_result += (std::stoi(past.value) + std::stoi(next.value));
-                result = eval_result;
-            }
+            std::unique_ptr<ASTNode> next_number_node = std::make_unique<NumberNode>(next.value);
+            std::unique_ptr<ASTNode> past_number_node = std::make_unique<NumberNode>(past.value);
+            std::unique_ptr<ASTNode> math_node = std::make_unique<MathNode>(current.value, past_number_node, next_number_node);
+            block_node->add_node(std::move(math_node));
+            return result;
         }
     }
+    throw Error::SyntaxError("Syntax Error.");
 }
 void Parser::parse()
 {
@@ -93,7 +86,7 @@ void Parser::parse()
                         position_in_tokens++;
                     }
                     lau_types var_value = evaluate_variable_value(eval_tokens);
-                    symbols.emplace(current.value, var_value);
+                    context.emplace(current.value, var_value);
                 }
                 else
                 {
