@@ -1,0 +1,27 @@
+Hi there, my name is Aman U and i am the creator of this new programming language.
+Project was started in 29.08.26.
+
+The main issues:
+    "std::unique_ptr<ASTNode>" dublication = i need to make a using Node = std::unique_ptr<ASTNode>;
+
+
+    BlockNode has void add_node(std::unique_ptr<ASTNode> node) method, which is not exist in ASTNode,
+    so compile dont see this method if we are defining block_node as std::unique_ptr<ASTNode>;
+
+
+    Interpretator is kinda suspicious. Honestly, i built its structure not testing how methods are working;
+
+
+    LAU_main.cpp don't compile now: i need to fix bugs with catching errors from Error namespace.
+
+
+    Very bad ownership and memory management: i admit it. Shared pointers was not a good idea. I'll fix this. 
+
+
+
+My main goal is to launch my MVP version, and then i'll fix all code's problems,
+optimize it and MAYBE i'll add functions like print() and IF statements.
+    
+
+I need to improve my GITHUB skills too by the way.
+     

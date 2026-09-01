@@ -7,24 +7,24 @@ namespace Error
     public:
         SyntaxError(const std::string &message) : std::runtime_error(message) {};
     };
-    class ValueError : SyntaxError
+    class ValueError : std::runtime_error
     {
     public:
-        ValueError(const std::string &message) : SyntaxError(message) {};
+        ValueError(const std::string &message) : std::runtime_error(message) {};
     };
-    class NameError : SyntaxError
+    class NameError : std::runtime_error
     {
     public:
-        NameError(const std::string &message) : SyntaxError(message) {};
+        NameError(const std::string &message) : std::runtime_error(message) {};
     };
-    class ValueError : SyntaxError
+    class ValueError : std::runtime_error
     {
     public:
-        ValueError(const std::string &message) : SyntaxError(message) {};
+        ValueError(const std::string &message) : std::runtime_error(message) {};
     };
-    class ZeroDivisionError : SyntaxError
+    class ZeroDivisionError : std::runtime_error
     {
     public:
-        ZeroDivisionError(const std::string &message) : SyntaxError(message) {};
+        ZeroDivisionError(const std::string &message) : std::runtime_error(message) {};
     };
 }

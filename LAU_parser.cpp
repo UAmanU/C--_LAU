@@ -3,8 +3,7 @@
 // cause now, it will crash in line like
 // num = 1 + 2
 // i think i need to add ; symbol to see the lines.
-
-Parser::Parser(std::vector<TokenData::Token> tokens) : tokens(std::move(tokens)) {}
+Parser::Parser(std::vector<TokenData::Token> tokens, std::shared_ptr<BlockNode> block_node) : tokens(std::move(tokens)), block_node(std::move(block_node)) {};
 
 void Parser::next_token()
 {
@@ -30,7 +29,7 @@ auto Parser::token_to_type(const TokenData::Token &token) const
     }
     throw Error::ValueError("ValueError");
 }
-lau_types Parser::evaluate_variable_value(const std::vector<TokenData::Token> &eval_tokens)
+void Parser::evaluate_variable_value(const std::vector<TokenData::Token> &eval_tokens)
 {
     TokenData::TokenType result_type = eval_tokens[0].type;
     for (int i = 1; i < eval_tokens.size(); i++)
@@ -53,7 +52,7 @@ lau_types Parser::evaluate_variable_value(const std::vector<TokenData::Token> &e
             std::unique_ptr<ASTNode> past_number_node = std::make_unique<NumberNode>(past.value);
             std::unique_ptr<ASTNode> math_node = std::make_unique<MathNode>(current.value, past_number_node, next_number_node);
             block_node->add_node(std::move(math_node));
-            return 0; //code ended succesfully.
+            return; // code ended succesfully.
         }
     }
     throw Error::SyntaxError("Syntax Error.");
@@ -75,7 +74,7 @@ void Parser::parse()
             TokenData::Token next_symbol = tokens[position_in_tokens + 1];
             if (next_symbol.type == TokenData::TokenType::OPERATIONS)
             {
-                if (next_symbol.value == "=") // asignment
+                if (next_symbol.value == "=") // assignment
                 {
                     std::vector<TokenData::Token> eval_tokens;
                     while (tokens[position_in_tokens].value != ";")
@@ -84,7 +83,7 @@ void Parser::parse()
                         eval_tokens.push_back({current.type, current.value});
                         position_in_tokens++;
                     }
-                    lau_types var_value = evaluate_variable_value(eval_tokens);
+                    evaluate_variable_value(eval_tokens);
                 }
                 else
                 {
@@ -101,4 +100,8 @@ void Parser::parse()
             throw Error::SyntaxError("Invalid syntax.");
         }
     }
+}
+std::shared_ptr<BlockNode> Parser::get_block_node() const
+{
+    return block_node;
 }
