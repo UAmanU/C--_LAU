@@ -9,89 +9,75 @@ struct ASTNode
     virtual ~ASTNode() = default;
     virtual lau_types eval(Context &context) = 0;
 };
-struct BlockNode : ASTNode
+struct BlockNode : public ASTNode
 {
-    std::vector<ASTNode> nodes;
-    BlockNode() = default;
+    std::vector<std::unique_ptr<ASTNode>> nodes;
+    BlockNode(std::vector<std::unique_ptr<ASTNode>> nodes) : nodes(std::move(nodes)) {}
     void add_node(std::unique_ptr<ASTNode> node)
     {
-        nodes.push_back(std::move(*node));
+        nodes.push_back(std::move(node));
     }
     lau_types eval(Context &context) override
     {
-        lau_types result;
+        if (nodes.empty())
+        {
+            throw Error::SyntaxError("Syntax Error: BlockNode is empty.");
+        }
         for (auto &node : nodes)
         {
-            result = node.eval(context);
+            node->eval(context);
         }
-        return result;
+
+        return 0; // i Don't know what to return here, cause BlockNode can't return once single value.
     }
 };
-struct AssignmentNode : ASTNode
+struct VarNode : public ASTNode
 {
     std::string var_name;
-    std::unique_ptr<ASTNode> expression;
-    AssignmentNode(std::string var_name, std::unique_ptr<ASTNode> var_expression) : var_name(std::move(var_name)), expression(std::move(var_expression)) {};
+    lau_types var_value;
+    VarNode(std::string var_name, lau_types var_value) : var_name(std::move(var_name)), var_value(std::move(var_value)) {}
     lau_types eval(Context &context) override
     {
-        lau_types expression_value = expression->eval(context);
-        context[var_name] = expression_value;
-        return expression_value;
+        context[var_name] = var_value;
+        return var_value;
     }
 };
-struct MathNode : ASTNode
+struct MathNode : public ASTNode
 {
-    char op;
+    char operation;
     std::unique_ptr<ASTNode> left;
     std::unique_ptr<ASTNode> right;
-    MathNode(char op, std::unique_ptr<ASTNode> l, std::unique_ptr<ASTNode> r) : op(op), left(std::move(l)), right(std::move(r)) {};
+    MathNode(char operation, std::unique_ptr<ASTNode> left, std::unique_ptr<ASTNode> right) : operation(operation), left(std::move(left)), right(std::move(right)) {}
     lau_types eval(Context &context) override
     {
-        long long l_result = std::get<long long>(left->eval(context));
-        long long r_result = std::get<long long>(right->eval(context));
-        lau_types result = 0;
-        switch (op)
+        int left_value = std::get<long long>(left->eval(context));
+        int right_value = std::get<long long>(right->eval(context));
+        switch (operation)
         {
         case '+':
-            result = l_result + r_result;
-            break;
+            return left_value + right_value;
         case '-':
-            result = l_result - r_result;
-            break;
+            return left_value - right_value;
         case '*':
-            result = l_result * r_result;
-            break;
+            return left_value * right_value;
         case '/':
-            if (r_result == 0)
+            if (right_value == 0)
             {
-                throw Error::ZeroDivisionError("You can't divide on zero.");
+                throw Error::ValueError("ValueError: Division by zero.");
             }
-            result = l_result / r_result;
-            break;
+            return left_value / right_value;
+        default:
+            throw Error::SyntaxError("Syntax Error: Invalid operation.");
         }
-        return result;
+        return 0;
     }
 };
-struct VariableNode : ASTNode
+struct NumberNode : public ASTNode
 {
-    std::string var_name;
-    VariableNode(const std::string &name) : var_name(name) {};
+    lau_types value;
+    NumberNode(long long value) : value(std::move(value)) {}
     lau_types eval(Context &context) override
     {
-        auto it = context.find(var_name);
-        if (it != context.end())
-        {
-            return it->second;
-        }
-        throw Error::NameError("Name Error.");
-    }
-};
-struct NumberNode : ASTNode
-{
-    long long num;
-    NumberNode(long long num) : num(num) {};
-    lau_types eval(Context &context) override
-    {
-        return num;
+        return value;
     }
 };

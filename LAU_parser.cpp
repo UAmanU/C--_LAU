@@ -32,7 +32,6 @@ auto Parser::token_to_type(const TokenData::Token &token) const
 }
 lau_types Parser::evaluate_variable_value(const std::vector<TokenData::Token> &eval_tokens)
 {
-    lau_types result;
     TokenData::TokenType result_type = eval_tokens[0].type;
     for (int i = 1; i < eval_tokens.size(); i++)
     {
@@ -54,7 +53,7 @@ lau_types Parser::evaluate_variable_value(const std::vector<TokenData::Token> &e
             std::unique_ptr<ASTNode> past_number_node = std::make_unique<NumberNode>(past.value);
             std::unique_ptr<ASTNode> math_node = std::make_unique<MathNode>(current.value, past_number_node, next_number_node);
             block_node->add_node(std::move(math_node));
-            return result;
+            return 0; //code ended succesfully.
         }
     }
     throw Error::SyntaxError("Syntax Error.");
@@ -86,7 +85,6 @@ void Parser::parse()
                         position_in_tokens++;
                     }
                     lau_types var_value = evaluate_variable_value(eval_tokens);
-                    context.emplace(current.value, var_value);
                 }
                 else
                 {
