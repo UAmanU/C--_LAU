@@ -19,6 +19,7 @@ namespace TokenData
     {
         TokenType type;
         std::string value;
+        auto operator<=>(const Token &token) const = default;
     };
 }
 namespace Bool

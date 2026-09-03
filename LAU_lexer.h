@@ -8,7 +8,7 @@ private:
     std::string text_code;
 
 public:
-    Lexer(const std::string &text_code); // takes file.txt's data to text_code attribute
+    Lexer(std::string text_code); // takes file.txt's data to text_code attribute
 
     ~Lexer() = default; // default destructor
 

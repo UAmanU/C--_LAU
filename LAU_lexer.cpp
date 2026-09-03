@@ -1,6 +1,7 @@
 #include "LAU_lexer.h"
+#include <iostream>
 #include "LAU_keysymbols.hpp"
-Lexer::Lexer(const std::string &text) : text_code(text) {};
+Lexer::Lexer(std::string text) : text_code(std::move(text)) {};
 std::vector<TokenData::Token> Lexer::get_tokens() const
 {
     return tokens;
@@ -22,29 +23,34 @@ void Lexer::convert_to_tokens()
         char current = text_code[i];
         if (std::isspace(current)) // spaces
         {
+            std::cout << "space.\n";
             i++;
             continue;
         } // operations
         if (current == Key_symbols::line_separator)
         { // line separator ;
+            std::cout << "line separator.\n";
             tokens.push_back({TokenData::TokenType::KEYWORD, ";"});
             i++;
             continue;
         }
         if (current == static_cast<char>(Operations::OperationsType::PLUS))
         {
+            std::cout << "operation +.\n";
             tokens.push_back({TokenData::TokenType::OPERATIONS, "+"});
             i++;
             continue;
         }
         if (current == static_cast<char>(Operations::OperationsType::MINUS))
         {
+            std::cout << "operation -.\n";
             tokens.push_back({TokenData::TokenType::OPERATIONS, "-"});
             i++;
             continue;
         }
         if (current == static_cast<char>(Operations::OperationsType::ASIGN))
         {
+            std::cout << "operation =.\n";
             tokens.push_back({TokenData::TokenType::OPERATIONS, "="});
             i++;
             continue;
@@ -59,6 +65,8 @@ void Lexer::convert_to_tokens()
                 number += current;
                 i++;
             }
+            std::cout << "number: " << number<<'\n';
+            i++;
             tokens.push_back({TokenData::TokenType::INT, number});
             continue;
         }
@@ -70,6 +78,7 @@ void Lexer::convert_to_tokens()
                 word += text_code[i];
                 i++;
             }
+            std::cout << "string: " << word <<'\n';
             tokens.push_back({TokenData::TokenType::STRING, word});
             i++;
             continue;
@@ -83,6 +92,7 @@ void Lexer::convert_to_tokens()
                 i++;
                 continue;
             }
+            std::cout << (get_word_type(word) == TokenData::TokenType::BOOL ? "bool: " : "variable: ") << word <<'\n';
             tokens.push_back({get_word_type(word), word});
             continue;
         }

@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include "LAU_tokens.hpp"
 #include <memory>
+#include <vector>
 #include "LAU_errors.hpp"
 using Context = std::unordered_map<std::string, lau_types>;
 struct ASTNode
@@ -29,6 +30,18 @@ struct BlockNode : public ASTNode
         }
 
         return 0; // i Don't know what to return here, cause BlockNode can't return once single value.
+    }
+};
+struct AssignNode : public ASTNode
+{
+    std::string var_name;
+    std::unique_ptr<ASTNode> var_value;
+    AssignNode(std::string var_name, std::unique_ptr<ASTNode> var_value) : var_name(std::move(var_name)), var_value(std::move(var_value)) {}
+    lau_types eval(Context &context) override
+    {
+        lau_types value = var_value->eval(context);
+        context[var_name] = value;
+        return value;
     }
 };
 struct VarNode : public ASTNode
